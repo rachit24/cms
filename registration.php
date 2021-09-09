@@ -19,7 +19,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="username" class="sr-only">Username</label>
-                                <input type="text" name="username" id="username" class="form-control" placeholder="Create A Username">
+                                <input type="text" name="username" id="username" class="form-control" placeholder="Create A Username" autocomplete="on" value="<?php echo isset($username)?$username: '' ?>">
                             </div>
                             <div class="form-group">
                                 <label for="email" class="sr-only">Email</label>
@@ -50,29 +50,42 @@
         $email = $_POST['email'];
         $password = $_POST['password'];
 
-        if(!empty($username) && !empty($password) && !empty($email)){
-
-            $result = mysqli_query($conn,"SELECT user_id FROM users WHERE username = '{$username}'");
-            if(mysqli_num_rows($result) == 0) {
-                $username = mysqli_real_escape_string($conn, $username);
-                $email    = mysqli_real_escape_string($conn, $email);
-                $password = mysqli_real_escape_string($conn, $password);
-
-                $password = password_hash( $password, PASSWORD_BCRYPT, array('cost' => 12));                
-                    
-                $query = "INSERT INTO users (username,user_firstname, user_lastname, user_email, user_password, user_role) ";
-
-                $query .= "VALUES('{$username}','{$firstname}','{$lastname}','{$email}', '{$password}', 'subscriber')";
-
-                $register_user_query = mysqli_query($conn, $query);
-                echo "<center><h4 class='bg-success'>Thanks for registering with us {$username}. You are now a subscriber! <a href = 'index.php'>Login</a></h4></center>";                
-            } else {
-                echo "<center><h4 class='bg-danger'>Please choose a different username, ' {$username} ' is already taken! </h4></center>";
-            }            
+        if(!empty($firstname) && !empty($username) && !empty($password) && !empty($email)){
+            if(strlen($username)<4){
+                echo "<center><h4 class='bg-danger'>Minimum 4 characters required for Username! Try again.</h4></center>";
+            }else if(strlen($password)<5){
+                echo "<center><h4 class='bg-danger'>Weak Password! Try again with more than 5 characters.</h4></center>";
+            }
+            else{
+                $result = mysqli_query($conn,"SELECT user_id FROM users WHERE username = '{$username}'");
+    
+                $result2 = mysqli_query($conn,"SELECT user_id FROM users WHERE user_email = '{$email}'");
+    
+                if(mysqli_num_rows($result2) == 0){
+                    if(mysqli_num_rows($result) == 0) {
+                        $username = mysqli_real_escape_string($conn, $username);
+                        $email    = mysqli_real_escape_string($conn, $email);
+                        $password = mysqli_real_escape_string($conn, $password);
+        
+                        $password = password_hash( $password, PASSWORD_BCRYPT, array('cost' => 12));                
+                            
+                        $query = "INSERT INTO users (username,user_firstname, user_lastname, user_email, user_password, user_role) ";
+        
+                        $query .= "VALUES('{$username}','{$firstname}','{$lastname}','{$email}', '{$password}', 'subscriber')";
+        
+                        $register_user_query = mysqli_query($conn, $query);
+                        echo "<center><h4 class='bg-success'>Thanks for registering with us {$username}. You are now a subscriber! <a href = 'index.php'>Login</a></h4></center>";                
+                    } else {
+                        echo "<center><h4 class='bg-danger'>Please choose a different username, ' {$username} ' is already taken! </h4></center>";
+                    }           
+                
+                }else{
+                    echo "<center><h4 class='bg-danger'>Email Already Exists! Try again.</h4></center>";
+                }
+            }             
         }else{
             echo "<script>alert('Please fill all fields')</script>";
-        }
-        
+        }        
     }
 ?>
 

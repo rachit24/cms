@@ -50,4 +50,13 @@
             header("Location: categories.php");
         }
     }
+
+    function recordCount($table){
+        global $conn;
+        $query = "SELECT * FROM ". $table;
+        $select_query = mysqli_query($conn,$query);
+        $result = mysqli_num_rows($select_query);
+        confirmQuery($result);
+        return $result;
+    }
 ?>

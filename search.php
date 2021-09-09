@@ -1,3 +1,9 @@
+<?php 
+    session_start();
+    if($_SESSION['logged']==0){
+        header("Location: index.php") ;
+    }else{
+?>
 <?php include "includes/header.php"?>
 <!-- Navigation -->
 <?php include "includes/navigation.php"?>
@@ -67,3 +73,4 @@
         <hr>
 
 <?php include "includes/footer.php"?>
+<?php }?>
